@@ -24,6 +24,8 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import Link from "next/link";
+import { Badge } from "@/components/ui/badge";
+import { useRouter } from "next/navigation";
 
 const sidebarItems = [
   { icon: Grid3X3, label: "Dashboard", active: true },
@@ -101,6 +103,7 @@ const cars = [
 
 export default function page() {
   const [searchQuery, setSearchQuery] = useState("");
+  const router = useRouter();
 
   return (
     <div className="flex h-screen bg-background">
@@ -135,7 +138,7 @@ export default function page() {
 
           {/* Cars Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {cars.map((car) => (
+            {cars.map((car, index) => (
               <Card
                 key={car.id}
                 className="overflow-hidden hover:shadow-lg transition-shadow cursor-flow relative"
@@ -154,13 +157,30 @@ export default function page() {
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end" className="">
-                    <DropdownMenuItem className="">
+                    <DropdownMenuItem
+                      className=""
+                      onClick={() => router.push(`/listing/${car.id}`)}
+                    >
                       View Details
                     </DropdownMenuItem>
                     <DropdownMenuItem className="">Export</DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
+
                 <div className="relative">
+                  {/* ✅ Status Badge */}
+                  <div className="absolute top-2 left-2 z-50">
+                    {index % 2 === 0 ? (
+                      <Badge className="bg-green-300 text-green-700 rounded-full">
+                        Live
+                      </Badge>
+                    ) : (
+                      <Badge className="bg-yellow-300 text-yellow-700 rounded-full">
+                        Pending Review
+                      </Badge>
+                    )}
+                  </div>
+
                   <div className="flex justify-center">
                     <img
                       src={car.image || "/placeholder.svg"}
@@ -169,6 +189,7 @@ export default function page() {
                     />
                   </div>
                 </div>
+
                 <CardContent className="p-4">
                   <h3 className="font-semibold text-lg mb-3">{car.name}</h3>
                   <div className="flex justify-between text-sm text-muted-foreground mb-4">
